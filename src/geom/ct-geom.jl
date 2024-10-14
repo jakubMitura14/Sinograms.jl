@@ -110,7 +110,7 @@ function rays(rg::CtFan{Td,To}) where {Td,To}
     s = _s(rg)
     t = _t(rg)
     β = _ar(rg)
-    i = Iterators.product(s, t, β)
+    i = collect(Iterators.product(s, t, β))
     if rg isa CtFanArc
         fun = stb -> cb_arc_to_par(stb..., _dso(rg), rg.dod)
     else
