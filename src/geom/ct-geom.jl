@@ -96,15 +96,15 @@ function rays(rg::CtPar)
 end
 
 function threaded_map(f, collection)
-    results = Vector{eltype(f(collection[1]))}(undef, length(collection))
-    @threads for i in 1:length(collection)
+    results = Vector(undef, length(collection))
+    for i in 1:length(collection)
+    # @threads for i in 1:length(collection)
         results[i] = f(collection[i])
     end
     return results
 end
 
 function rays(rg::CtFan{Td,To}) where {Td,To}
-    print("aaaaaaaaaa")
 
     rg.src isa CtSourceCircle || throw("non-circular not done")
     s = _s(rg)
