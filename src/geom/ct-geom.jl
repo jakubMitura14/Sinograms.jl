@@ -7,6 +7,7 @@ using the parallel, fan beam arc, or flat fan beam geometry.
 =#
 
 export dims, downsample, oversample, rays, axes
+using Base.Threads: @threads
 
 
 # Methods common to all types
@@ -94,8 +95,17 @@ function rays(rg::CtPar)
     return i
 end
 
+function threaded_map(f, collection)
+    results = Vector{eltype(f(collection[1]))}(undef, length(collection))
+    @threads for i in 1:length(collection)
+        results[i] = f(collection[i])
+    end
+    return results
+end
 
 function rays(rg::CtFan{Td,To}) where {Td,To}
+    print("aaaaaaaaaa")
+
     rg.src isa CtSourceCircle || throw("non-circular not done")
     s = _s(rg)
     t = _t(rg)
@@ -106,7 +116,7 @@ function rays(rg::CtFan{Td,To}) where {Td,To}
     else
         fun = stb -> cb_flat_to_par(stb..., _dso(rg), rg.dod)
     end
-    return Iterators.map(fun, i)
+    return threaded_map(fun, i)
 end
 
 
