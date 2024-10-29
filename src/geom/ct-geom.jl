@@ -105,18 +105,17 @@ function threaded_map(f, collection)
 end
 
 function rays(rg::CtFan{Td,To}) where {Td,To}
-
     rg.src isa CtSourceCircle || throw("non-circular not done")
     s = _s(rg)
     t = _t(rg)
     β = _ar(rg)
-    i = collect(Iterators.product(s, t, β))
+    i = Iterators.product(s, t, β)
     if rg isa CtFanArc
         fun = stb -> cb_arc_to_par(stb..., _dso(rg), rg.dod)
     else
         fun = stb -> cb_flat_to_par(stb..., _dso(rg), rg.dod)
     end
-    return threaded_map(fun, i)
+    return Iterators.map(fun, i)
 end
 
 
